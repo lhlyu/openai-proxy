@@ -78,34 +78,41 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
         request.headers.set('Authorization', 'Bearer ' + API_KEY)
     }
 
-    return await fetch(url, request)
+    const resp = await fetch(url, request)
+
+    resp.headers = new Headers({
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, AUTH_CODE",
+        ...resp.headers,
+    })
+    return resp
 }
 
 serve(async (request: Request) => {
     const url = new URL(request.url)
     console.log(request.url, request.method)
     if (request.method === 'OPTIONS') {
-        return new Response('ok', {
-            headers
-        })
+        return new Response('ok', { headers })
     }
 
     if (url.pathname === '/') {
-        return new Response('一切安好~')
+        return new Response('一切安好~', { headers })
     }
 
     if (url.pathname === '/favicon.ico') {
-        return new Response()
+        return new Response(null, { headers })
     }
 
     if (url.pathname === '/tauri-chatgpt/latest') {
         let lastVersion = getFromCache(cache_key)
         if (lastVersion) {
-            return new Response(lastVersion)
+            return new Response(lastVersion, { headers })
         }
         lastVersion = await getLastVersionJson()
         setToCache(cache_key, lastVersion)
-        return new Response(lastVersion)
+        return new Response(lastVersion, { headers })
     }
 
     return requestOpenai(url, request)
