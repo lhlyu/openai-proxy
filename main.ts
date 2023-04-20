@@ -76,7 +76,7 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
             })
         }
         const newHeaders = new Headers(request.headers)
-        newHeaders.headers.set('Authorization', 'Bearer ' + API_KEY)
+        newHeaders.set('Authorization', 'Bearer ' + API_KEY)
         return await fetch(url, {
             ...request,
             headers: newHeaders
@@ -107,7 +107,20 @@ serve(async (request: Request) => {
     }
 
     if (url.pathname.startsWith('/v1/')) {
-        return requestOpenai(url, request)
+        try {
+            return requestOpenai(url, request)
+        } catch (e) {
+            console.error(e)
+            const msg = {
+                error: {
+                    message: e.message
+                }
+            }
+            return new Response(JSON.stringify(msg), {
+                status: 500,
+                headers: headers,
+            })
+        }
     }
 
 
