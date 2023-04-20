@@ -17,7 +17,7 @@ serve(async (request: Request) => {
         url.host = API_HOST
     }
 
-    if (code && API_KEY) {
+    if (code && API_KEY && code.length >= 12) {
         if (!CODES.includes(code)) {
             return new Response('auth code illegal', {
                 status: 401
