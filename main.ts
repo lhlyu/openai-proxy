@@ -63,7 +63,7 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
         url.host = API_HOST
     }
 
-    if (code && API_KEY && code.length >= 12) {
+    if (code && API_KEY && code.length) {
         if (!CODES.includes(code)) {
             const msg = {
                 error: {
@@ -75,7 +75,9 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
                 headers: headers,
             })
         }
-        request.headers.set('Authorization', 'Bearer ' + API_KEY)
+        const newRequest = request.clone()
+        newRequest.headers.set('Authorization', 'Bearer ' + API_KEY)
+        return await fetch(url, newRequest)
     }
 
     return await fetch(url, request)
@@ -83,13 +85,8 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
 
 serve(async (request: Request) => {
     const url = new URL(request.url)
-    console.log(request.url, request.method)
     if (request.method === 'OPTIONS') {
         return new Response('ok', { headers })
-    }
-
-    if (url.pathname === '/') {
-        return new Response('一切安好~', { headers })
     }
 
     if (url.pathname === '/favicon.ico') {
@@ -106,6 +103,11 @@ serve(async (request: Request) => {
         return new Response(lastVersion, { headers })
     }
 
-    return requestOpenai(url, request)
+    if (url.pathname.startsWith('/v1/')) {
+        return requestOpenai(url, request)
+    }
+
+
+    return new Response('一切安好~', { headers })
 })
 
