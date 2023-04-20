@@ -4,6 +4,13 @@ const API_HOST = Deno.env.get('API_HOST')
 const API_KEY = Deno.env.get('API_KEY')
 const CODES = Deno.env.get('CODES') || ''
 
+const headers = new Headers({
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, AUTH_CODE",
+});
+
 const cache_key = "Tauri-ChatGPT"
 const cache_expire = 10 * 60 * 1000
 const cache = new Map<string, { data: string, timestamp: number }>()
@@ -57,8 +64,6 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
     }
 
     if (code && API_KEY && code.length >= 12) {
-        console.log('CODES:', CODES)
-        console.log('code:', code, !CODES.includes(code))
         if (!CODES.includes(code)) {
             const msg = {
                 error: {
@@ -66,7 +71,8 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
                 }
             }
             return new Response(JSON.stringify(msg), {
-                status: 401
+                status: 401,
+                headers: headers,
             })
         }
         request.headers.set('Authorization', 'Bearer ' + API_KEY)
@@ -74,14 +80,6 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
 
     return await fetch(url, request)
 }
-
-
-const headers = new Headers({
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization, AUTH_CODE",
-});
 
 serve(async (request: Request) => {
     const url = new URL(request.url)
