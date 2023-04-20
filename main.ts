@@ -57,6 +57,8 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
     }
 
     if (code && API_KEY && code.length >= 12) {
+        console.log('CODES:', CODES)
+        console.log('code:', code, !CODES.includes(code))
         if (!CODES.includes(code)) {
             const msg = {
                 error: {
@@ -83,7 +85,7 @@ const headers = new Headers({
 
 serve(async (request: Request) => {
     const url = new URL(request.url)
-
+    console.log(request.url, request.method)
     if (request.method === 'OPTIONS') {
         return new Response('ok', {
             headers
