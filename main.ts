@@ -77,7 +77,7 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
 const headers = new Headers({
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
     "Access-Control-Allow-Headers": "Content-Type",
 });
 
