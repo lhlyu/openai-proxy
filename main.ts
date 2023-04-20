@@ -78,16 +78,7 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
         request.headers.set('Authorization', 'Bearer ' + API_KEY)
     }
 
-    const resp = await fetch(url, request)
-
-    resp.headers = new Headers({
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, AUTH_CODE",
-        ...resp.headers,
-    })
-    return resp
+    return await fetch(url, request)
 }
 
 serve(async (request: Request) => {
