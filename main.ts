@@ -58,7 +58,12 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
 
     if (code && API_KEY && code.length >= 12) {
         if (!CODES.includes(code)) {
-            return new Response('auth code illegal', {
+            const msg = {
+                error: {
+                    message: "Auth Code Illegal"
+                }
+            }
+            return new Response(JSON.stringify(msg), {
                 status: 401
             })
         }
@@ -68,8 +73,22 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
     return await fetch(url, request)
 }
 
+
+const headers = new Headers({
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET",
+    "Access-Control-Allow-Headers": "Content-Type",
+});
+
 serve(async (request: Request) => {
     const url = new URL(request.url)
+
+    if (request.method === 'OPTIONS') {
+        return new Response('ok', {
+            headers
+        })
+    }
 
     if (url.pathname === '/') {
         return new Response('一切安好~')
