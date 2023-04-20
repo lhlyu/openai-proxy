@@ -64,7 +64,7 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
     }
 
     if (code && API_KEY && code.length) {
-        if (!CODES.includes(code)) {
+        if (!CODES.includes(code) || code.length < 12) {
             const msg = {
                 error: {
                     message: "Auth Code Illegal"
@@ -75,9 +75,12 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
                 headers: headers,
             })
         }
-        const newRequest = request.clone()
-        newRequest.headers.set('Authorization', 'Bearer ' + API_KEY)
-        return await fetch(url, newRequest)
+        const newHeaders = new Headers(request.headers)
+        newHeaders.headers.set('Authorization', 'Bearer ' + API_KEY)
+        return await fetch(url, {
+            ...request,
+            headers: newHeaders
+        })
     }
 
     return await fetch(url, request)
