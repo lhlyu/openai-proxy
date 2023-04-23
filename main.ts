@@ -59,6 +59,10 @@ const getLastVersionJson = async ():Promise<string> => {
 const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
     const code = request.headers.get('AUTH_CODE')
 
+    if (code.length === 0) {
+        return new Response('前方代理，闲人禁行！', { headers })
+    }
+
     if (API_HOST) {
         url.host = API_HOST
     }
