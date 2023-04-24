@@ -57,7 +57,7 @@ const getLastVersionJson = async ():Promise<string> => {
 
 // 请求openai
 const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
-    const code = request.headers.get('AUTH_CODE')
+    const code = request.headers.get('AUTH_CODE') ?? ''
 
     if (code.length === 0) {
         return new Response('前方代理，闲人禁行！', { headers })
@@ -67,7 +67,7 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
         url.host = API_HOST
     }
 
-    if (code && API_KEY && code.length) {
+    if (API_KEY) {
         if (!CODES.includes(code) || code.length < 12) {
             const msg = {
                 error: {
