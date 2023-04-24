@@ -12,7 +12,7 @@ const headers = new Headers({
 });
 
 const cache_key = "Tauri-ChatGPT"
-const cache_expire = 10 * 60 * 1000
+const cache_expire = 60 * 1000
 const cache = new Map<string, { data: string, timestamp: number }>()
 
 function getFromCache(key: string): string | null {
