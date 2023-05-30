@@ -73,6 +73,10 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
         url.host = API_HOST
     }
 
+    if (!url.pathname.startsWith('/v1')) {
+        url.pathname = '/v1' + url.pathname
+    }
+
     if (API_KEY && !hasAllowKey) {
         if (!CODES.includes(code) || code.length < 12) {
             const msg = {
