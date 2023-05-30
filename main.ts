@@ -114,7 +114,8 @@ serve(async (request: Request) => {
         return new Response(lastVersion, { headers })
     }
 
-    if (url.pathname.startsWith('/v1/')) {
+    if (url.pathname.startsWith('/')) {
+        console.log('pathname:', url.pathname)
         try {
             return requestOpenai(url, request)
         } catch (e) {
