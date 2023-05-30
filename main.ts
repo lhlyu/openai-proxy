@@ -59,7 +59,13 @@ const getLastVersionJson = async ():Promise<string> => {
 const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
     const code = request.headers.get('AUTH_CODE') ?? ''
 
-    if (code.length === 0) {
+    let hasAllowKey = false
+
+    if (API_KEY && request.headers.get('Authorization')?.endsWith(API_KEY)) {
+        hasAllowKey = true
+    }
+
+    if (code.length === 0 && !hasAllowKey) {
         return new Response('前方代理，闲人禁行！', { headers })
     }
 
@@ -67,7 +73,7 @@ const requestOpenai = async (url: URL, request: Request):Promise<Response> => {
         url.host = API_HOST
     }
 
-    if (API_KEY) {
+    if (API_KEY && !hasAllowKey) {
         if (!CODES.includes(code) || code.length < 12) {
             const msg = {
                 error: {
