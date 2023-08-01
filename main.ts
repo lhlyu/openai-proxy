@@ -108,7 +108,7 @@ serve(async (request: Request) => {
         return new Response(null, { headers })
     }
 
-    if (url.pathname === '/tauri-chatgpt/latest') {
+    if (url.pathname === '/tauri-chatgpt/latest' || url.pathname === '/aichan/latest') {
         let lastVersion = getFromCache(cache_key)
         if (lastVersion) {
             return new Response(lastVersion, { headers })
